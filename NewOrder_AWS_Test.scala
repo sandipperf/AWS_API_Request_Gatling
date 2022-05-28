@@ -23,8 +23,6 @@ object NewOrder_AWS_Test {
   var BatchId = new StringBuilder()
   var OrderId = new StringBuilder()
   
-  var SignatureDetails = new StringBuilder()
-  var AmazonTimeDetails = new StringBuilder()
   val rnd = new Random()
 
   val scn = scenario("NewOrder_AWS")
@@ -65,17 +63,13 @@ object NewOrder_AWS_Test {
 
           val amzStamp = (signature.toString).substring(18, 34)
           val sign = (signature.toString).substring(35, 223)
-          AmazonTimeDetails.append(amzStamp).toString
-          SignatureDetails.append(sign).toString
-
-
           session
+            .set("signatureDetails", sign)
+            .set("amazonTimeDetails", amzStamp)
         })
         
         .exec(session => session.set("batchId", BatchId))
         .exec(session => session.set("orderId", OrderId))
-        .exec(session => session.set("signatureDetails", SignatureDetails))
-        .exec(session => session.set("amazonTimeDetails", AmazonTimeDetails))
         
         .exec(session => {
           BatchId = new StringBuilder()
